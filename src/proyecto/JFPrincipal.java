@@ -20,11 +20,12 @@ public class JFPrincipal extends javax.swing.JFrame {
         new Cliente(2, "Duvan", "Henao", 222222, 4321, 2000000, 0),
         new Cliente(3, "Libardo", "Gomez", 333333, 5555, 1500000, 0)
     };
+    
     static List<Cliente> clientes = Arrays.asList(clientesArray);
-    
     Cliente cliente;
-    
+
     // none
+
     /**
      * 0: buscar
      * 1: saldo
