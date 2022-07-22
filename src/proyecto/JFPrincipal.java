@@ -314,8 +314,18 @@ public class JFPrincipal extends javax.swing.JFrame {
         });
 
         jBRetirar.setText("RETIRAR");
+        jBRetirar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBRetirarActionPerformed(evt);
+            }
+        });
 
         jBPin.setText("CAMBIAR PIN");
+        jBPin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBPinActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -494,13 +504,23 @@ public class JFPrincipal extends javax.swing.JFrame {
     private void jBAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBAceptarActionPerformed
         // TODO add your handling code here:
         switch(operacion){
-            case 0:
+            case 0:// validar
                 aceptar();
                 break;
-            case 1:
+            case 1:// consulta saldo
                 break;
-            case 2:
-                
+            case 2:// retiro
+                jLMensajes.setText("Digita valor $");
+                retirar();
+                break;
+            case 3:
+                cambiarPin();
+                break;
+            case 4:
+                confirmarPin();
+                break;
+            default:
+                aceptar();
         }
     }//GEN-LAST:event_jBAceptarActionPerformed
 
@@ -510,6 +530,81 @@ public class JFPrincipal extends javax.swing.JFrame {
         consultarSaldo();
     }//GEN-LAST:event_jBSaldoActionPerformed
 
+    private void jBRetirarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBRetirarActionPerformed
+        // TODO add your handling code here:
+        operacion = 2;
+        inicializar();
+        habilitarTeclado(true);
+        jPassword.setVisible(false);
+        jLMensajes.setVisible(true);
+        jLMensajes.setText("Digite valor $");
+        jTFValor.setVisible(true);
+    }//GEN-LAST:event_jBRetirarActionPerformed
+
+    private void jBPinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBPinActionPerformed
+        // TODO add your handling code here:
+        inicializar();
+        habilitarTeclado(true);
+        jPassword.setVisible(true);
+        jLMensajes.setText("Digita pin anterior");
+        operacion = 3;
+    }//GEN-LAST:event_jBPinActionPerformed
+
+    private void confirmarPin(){
+        String pass = String.valueOf(jPassword.getPassword());
+        int pin = Integer.parseInt(pass.trim());
+        inicializar();
+        jLMensajes.setVisible(true);
+        jLMensajes.setText("Cambio exitoso");
+        cliente.setPin(pin);
+        clientes.set(cliente.getId() - 1, cliente);
+        habilitarPrint(true);
+    }
+            
+    private void cambiarPin(){
+        String pass = String.valueOf(jPassword.getPassword());
+        int pin = Integer.parseInt(pass.trim());
+        if(pin < 4){
+            jLMensajes.setText("Pin debe tener 4");
+            return;
+        }
+        if(cliente.getPin() != pin){
+           inicializar();
+           jLMensajes.setText("Pin errado");
+           return;
+        }
+        operacion = 4;
+        jLMensajes.setVisible(true);
+        jLMensajes.setText("Digite nuevo pin");
+        jPassword.setText("");
+    }
+    
+    private void retirar(){
+        jLMensajes.setText("Digite valor $");
+        String valor = jTFValor.getText();
+        if(valor.length() == 0){
+            return;
+        }
+        jTFValor.setVisible(false);
+        double retiro = Double.parseDouble(valor);
+        if(retiro > cliente.getSaldo()){
+            inicializar();
+            jLMensajes.setVisible(true);
+            jLMensajes.setText("Valor mayor al saldo");
+            jTFValor.setText("");
+            return;
+        }
+        cliente.setSaldo(cliente.getSaldo() - retiro);
+        clientes.set(cliente.getId() - 1, cliente);
+        jTFValor.setText("");
+        inicializar();
+        habilitarPrint(true);
+        
+        clientes.stream().forEach(c -> {
+            System.out.println(c);
+        });
+    }
+    
     private void consultarSaldo(){
         inicializar();
         jLMensajes.setText("");
@@ -522,10 +617,10 @@ public class JFPrincipal extends javax.swing.JFrame {
         String pass = String.valueOf(jPassword.getPassword());
         if(pass.length() == 0){
             jLMensajes.setText("");
-            return;
+            return; 
         }
         validar();
-        jLMensajes.setText("");
+        jPassword.setText("");
     }
     
     private void validar(){
@@ -552,6 +647,8 @@ public class JFPrincipal extends javax.swing.JFrame {
     private void retroceso(){
         switch(operacion){
             case 0:
+            case 3:
+            case 4:
                 String pass = String.valueOf(jPassword.getPassword());
                 if(pass.length() > 0){
                     pass = pass.substring(0, pass.length() - 1);
@@ -560,37 +657,53 @@ public class JFPrincipal extends javax.swing.JFrame {
                     jPassword.setText("");
                 }
                 break;
-            case 1:
+            case 1:// saldo
                 break;
-            case 2:
+           
+            case 2:// retiro
+            
+                String retiro = jPassword.getText();
+                if(retiro.length() > 0){
+                    retiro = retiro.substring(0, retiro.length() - 1);
+                    jTFValor.setText(retiro);
+                }else{
+                    jTFValor.setText("");
+                }
+                break;
                 
+             default:
+                 
         }
     }
     
     private void setTeclado(int val){
-            /**
-     * 0: buscar
-     * 1: saldo
-     * 2: retiro
-     * 3: cambio pin
-     */
         switch(operacion){
-            case 0:
+            case 0:// validar
                 concatenarPin(val);
                 break;
-            case 1:
+            case 1:// saldo
                 break;
-            case 2:
-                
+            case 2:// retiro
+                concatenarValor(val);
+                break;
+          
+            default:
+               concatenarPin(val);     
         }
     }
     
+    public void concatenarValor(int val){
+        jTFValor.setText(jTFValor.getText() + val);
+    }
+            
     private void concatenarPin(int val){
         String pass = String.valueOf(jPassword.getPassword());
         if(pass.length() < 4){
             jPassword.setText(pass + val);
         }
     }
+    
+    
     
     private void buscar(){
         operacion = 0;
