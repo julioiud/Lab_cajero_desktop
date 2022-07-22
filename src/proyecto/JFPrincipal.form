@@ -379,11 +379,17 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="RETIRAR"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jBRetirarActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jBPin">
           <Properties>
             <Property name="text" type="java.lang.String" value="CAMBIAR PIN"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jBPinActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
