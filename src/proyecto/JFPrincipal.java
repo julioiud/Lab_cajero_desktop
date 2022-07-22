@@ -24,6 +24,7 @@ public class JFPrincipal extends javax.swing.JFrame {
     
     Cliente cliente;
     
+    // none
     /**
      * 0: buscar
      * 1: saldo
