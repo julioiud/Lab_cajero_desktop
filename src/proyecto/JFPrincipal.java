@@ -22,9 +22,7 @@ public class JFPrincipal extends javax.swing.JFrame {
     };
     
     static List<Cliente> clientes = Arrays.asList(clientesArray);
-    
     Cliente cliente;
-    
     /**
      * 0: buscar
      * 1: saldo
